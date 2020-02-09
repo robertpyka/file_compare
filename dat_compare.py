@@ -2,6 +2,7 @@
 #import GUI
 import tkinter as tk
 from tkinter import filedialog
+import tkinter.scrolledtext as tkst
 from tkinter import *
 
 wel_wind = tk.Tk()
@@ -65,10 +66,38 @@ def importB():
     dataB = dataB[0:a]
     return dataB
 
+def compare(dataA, dataB,text1, text2):
+    #check lenght
+    lenA = len(dataA)
+    lenB = len(dataB)
+    
+    for i in range(0,lenA):
+        #creating just name of point
+        placeA=dataA[i].find("=")
+        nameA=dataA[i]
+        nameA=nameA[0:placeA]
+        text1.tag_config("nok", background="yellow", foreground="red")
+        text1.tag_config("ok", background="green", foreground="black")
+        text2.tag_config("nok", background="yellow", foreground="red")
+        text2.tag_config("ok", background="green", foreground="black")
+        for j  in range(0,lenB):
+            placeB=dataA[j].find("=")
+            nameB=dataB[j]
+            nameB=nameB[0:placeB]
+            if nameA==nameB and dataA[i] == dataB[j]:
+                text1.insert('insert', "\n")
+                text1.insert('insert', dataA[i],"ok")
+                text2.insert('insert', "\n")
+                text2.insert('insert', dataB[j],"ok")
+            if nameA==nameB and dataA[i] != dataB[j]:
+                text1.insert('insert', "\n")
+                text1.insert('insert', dataA[i],"nok")
+                text2.insert('insert', "\n")
+                text2.insert('insert', dataB[j],"nok")
 def f1_but_click(event):
 #Get filepath from user
 
-    filename = filedialog.askopenfilename()
+    filename = filedialog.askopenfilename(filetypes=[("dat Files", "*.dat"), ("All Files", "*.*")])
     f1_entry.insert(0,filename)
     return "break"
 #return "break" keeps button unsunken
@@ -77,7 +106,7 @@ f1_but.bind("<Button-1>", f1_but_click)
 def f2_but_click(event):
 #Get filepath from user
     
-    filename = filedialog.askopenfilename()
+    filename = filedialog.askopenfilename(filetypes=[("dat Files", "*.dat"), ("All Files", "*.*")])
     f2_entry.insert(0,filename)
     return "break"
 f2_but.bind("<Button-1>", f2_but_click)
@@ -89,35 +118,45 @@ def clr_but_click(event):
 clr_but.bind("<Button-1>", clr_but_click)
 
 def comp_but_click(event):
+    #import datas to lists
     dataA = importA()
     dataB = importB()
+    
     if dataA == dataB:
+        #if files are the same,show small window with information
         window = tk.Tk()
         state = tk.Label(window, text="Files match")
         state.pack()
         window.mainloop()
 
     else:
-        window = tk.Tk()
-        greeting = tk.Label(window, text=dataB)
-        greeting.pack()
-        window.mainloop()   
+        #if files are diffrent show large window with listening of those files
+        root = tk.Tk()
+        root.title("ScrolledText")
+        frame1 = tk.Frame(master=root,bg="red")
+        frame1.pack(fill=tk.BOTH, side=tk.LEFT)
+
+
+        text1 = tkst.ScrolledText(
+            master = frame1,
+            wrap   = 'word',  # wrap text at full words only
+            )
+
+        text1.pack(fill='both',side=tk.LEFT, expand=True, padx=2)
+        #text1.insert('insert', lenA)
+
+        frame2 = tk.Frame(master=root,bg="blue")
+        frame2.pack(fill=tk.BOTH, side=tk.LEFT)
+        text2 = tkst.ScrolledText(
+            master = frame2,
+            wrap   = 'word',  # wrap text at full words only
+        )
+
+        text2.pack(fill='both',side=tk.LEFT, expand=True, padx=2)
+        #text2.insert('insert', lenB)
+        compare(dataA, dataB,text1, text2)
+        root.mainloop() 
 comp_but.bind("<Button-1>", comp_but_click)
 wel_wind.mainloop()
 
 
-
-# main
-##dataA = importA()
-##dataB = importB()
-##if dataA == dataB:
-##    window = tk.Tk()
-##    greeting = tk.Label(window, text="Files match")
-##    greeting.pack()
-##    window.mainloop()
-##
-##else:
-##    window = tk.Tk()
-##    greeting = tk.Label(window, text=dataB)
-##    greeting.pack()
-##    window.mainloop()
