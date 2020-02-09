@@ -67,19 +67,24 @@ def importB():
     return dataB
 
 def compare(dataA, dataB,text1, text2):
+#customizng text output
+    text1.tag_config("nok", background="yellow", foreground="red")
+    text1.tag_config("ok", background="green", foreground="black")
+    text1.tag_config("empty", background="blue", foreground="black")
+    text2.tag_config("nok", background="yellow", foreground="red")
+    text2.tag_config("ok", background="green", foreground="black")
+    text2.tag_config("empty", background="blue", foreground="black")
     #check lenght
     lenA = len(dataA)
     lenB = len(dataB)
     
     for i in range(0,lenA):
         #creating just name of point
+        added = "false"
         placeA=dataA[i].find("=")
         nameA=dataA[i]
         nameA=nameA[0:placeA]
-        text1.tag_config("nok", background="yellow", foreground="red")
-        text1.tag_config("ok", background="green", foreground="black")
-        text2.tag_config("nok", background="yellow", foreground="red")
-        text2.tag_config("ok", background="green", foreground="black")
+
         for j  in range(0,lenB):
             placeB=dataA[j].find("=")
             nameB=dataB[j]
@@ -89,11 +94,19 @@ def compare(dataA, dataB,text1, text2):
                 text1.insert('insert', dataA[i],"ok")
                 text2.insert('insert', "\n")
                 text2.insert('insert', dataB[j],"ok")
+                added = "true"
             if nameA==nameB and dataA[i] != dataB[j]:
                 text1.insert('insert', "\n")
                 text1.insert('insert', dataA[i],"nok")
                 text2.insert('insert', "\n")
                 text2.insert('insert', dataB[j],"nok")
+                added = "true"
+        if added == "false":
+            text1.insert('insert', "\n")
+            text1.insert('insert', dataA[i],"empty")
+            text2.insert('insert', "\n")
+            text2.insert('insert', "\n\n","empty")
+            
 def f1_but_click(event):
 #Get filepath from user
 
