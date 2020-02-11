@@ -40,7 +40,7 @@ def importA():
     a = 0
     for i in dataA:
         if i.count('DECL E6POS X') == 1:
-            dataA[a] = i
+            dataA[a] = i.strip()
             a=a+1
 
     #remowing useless elements
@@ -59,13 +59,20 @@ def importB():
     a = 0
     for i in dataB:
         if i.count('DECL E6POS X') == 1:
-            dataB[a] = i
+            dataB[a] = i.strip()
             a=a+1
 
     #remowing useles elements
     dataB = dataB[0:a]
     return dataB
-
+def green(dataA, dataB,i,j,text1,text2):
+    text1.insert('insert', dataA[i],"ok")
+    text2.insert('insert', dataB[j],"ok")
+    
+def red(dataA, dataB,i,j,text1,text2):
+    text1.insert('insert', dataA[i],"nok")
+    text2.insert('insert', dataB[j],"nok")
+    
 def compare(dataA, dataB,text1, text2):
 #customizng text output
     text1.tag_config("nok", background="yellow", foreground="red")
@@ -77,36 +84,53 @@ def compare(dataA, dataB,text1, text2):
     #check lenght
     lenA = len(dataA)
     lenB = len(dataB)
-    
+    x = 0
+    p = -1
     for i in range(0,lenA):
         #creating just name of point
         added = "false"
+
         placeA=dataA[i].find("=")
         nameA=dataA[i]
         nameA=nameA[0:placeA]
 
         for j  in range(0,lenB):
-            placeB=dataA[j].find("=")
+            placeB=dataB[j].find("=")
             nameB=dataB[j]
             nameB=nameB[0:placeB]
-            if nameA==nameB and dataA[i] == dataB[j]:
-                text1.insert('insert', "\n")
-                text1.insert('insert', dataA[i],"ok")
-                text2.insert('insert', "\n")
-                text2.insert('insert', dataB[j],"ok")
+            if nameA == nameB and j - p == 1:
+                added="true"
+                if nameA==nameB and dataA[i] == dataB[j]:
+                    green(dataA, dataB,i,j,text1,text2)
+                    p = j
+                if nameA==nameB and dataA[i] != dataB[j]:
+                    red(dataA, dataB,i,j,text1,text2)
+                    p = j
+            elif nameA == nameB and j - p < 1:
                 added = "true"
-            if nameA==nameB and dataA[i] != dataB[j]:
-                text1.insert('insert', "\n")
-                text1.insert('insert', dataA[i],"nok")
-                text2.insert('insert', "\n")
-                text2.insert('insert', dataB[j],"nok")
+                text1.insert('insert', dataA[i],"empty")
+                text2.insert('insert', "\n\n","empty")
+            elif nameA == nameB and j - p > 1: 
+                l = j
+                for k in range(p+1,l):
+                    text1.insert('insert', "\n\n","empty")
+                    text2.insert('insert', dataB[k],"empty")
+                if nameA==nameB and dataA[i] == dataB[j]:
+                    green(dataA, dataB,i,j,text1,text2)
+                    p = j
+                if nameA==nameB and dataA[i] != dataB[j]:
+                    red(dataA, dataB,i,j,text1,text2)
+                    p = j
                 added = "true"
         if added == "false":
-            text1.insert('insert', "\n")
             text1.insert('insert', dataA[i],"empty")
-            text2.insert('insert', "\n")
             text2.insert('insert', "\n\n","empty")
-            
+    #adding last elements from dataB without match
+    if p<j:
+        for a in range(p+1,len(dataB)):
+            text1.insert('insert', "\n\n","empty")
+            text2.insert('insert', dataB[a],"empty")
+
 def f1_but_click(event):
 #Get filepath from user
 
