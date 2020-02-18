@@ -31,20 +31,16 @@ clr_but.grid(row = 4, column = 0,padx=5, pady = 5, sticky = "e")
 
 def importA():
     #Take data to compare, dataA
-
+    #read path from entry into file path
     file_path = f1_entry.get()
+    #open file just to read
     f = open(file_path, "r")
-    dataA = f.readlines()
-    #variable for new list
-    #loop for to create new list, with  useable elements that begins with 'DECL E6POS X'
-    a = 0
-    for i in dataA:
-        if i.count('DECL E6POS X') == 1:
-            dataA[a] = i.strip()
-            a=a+1
-
-    #remowing useless elements
-    dataA = dataA[0:a]
+    #create list in loop just with DECL E6POS X 
+    dataA= []
+    for line in f:
+        if line.count('DECL E6POS X') == 1:
+            dataA.append(line.strip())
+    f.close()
     return dataA
     
 
@@ -53,25 +49,20 @@ def importB():
     
     file_path = f2_entry.get()
     f = open(file_path, "r")
-    dataB = f.readlines()
-    #variable for new list
-    #loop for to create new list, with  useable elements that begins with 'DECL E6POS X'
-    a = 0
-    for i in dataB:
-        if i.count('DECL E6POS X') == 1:
-            dataB[a] = i.strip()
-            a=a+1
-
-    #remowing useles elements
-    dataB = dataB[0:a]
+    #create list in loop just with DECL E6POS X 
+    dataB= []
+    for line in f:
+        if line.count('DECL E6POS X') == 1:
+            dataB.append(line.strip())
+    f.close()
     return dataB
 def green(dataA, dataB,i,j,text1,text2):
-    text1.insert('insert', dataA[i],"ok")
-    text2.insert('insert', dataB[j],"ok")
+    text1.insert(tk.END, dataA[i] + "\n","ok")
+    text2.insert(tk.END, dataB[j] + "\n","ok")
     
 def red(dataA, dataB,i,j,text1,text2):
-    text1.insert('insert', dataA[i],"nok")
-    text2.insert('insert', dataB[j],"nok")
+    text1.insert(tk.END, dataA[i] + "\n","nok")
+    text2.insert(tk.END, dataB[j] + "\n","nok")
     
 def compare(dataA, dataB,text1, text2):
 #customizng text output
@@ -108,28 +99,28 @@ def compare(dataA, dataB,text1, text2):
                     p = j
             elif nameA == nameB and j - p < 1:
                 added = "true"
-                text1.insert('insert', dataA[i],"empty")
-                text2.insert('insert', "\n\n","empty")
+                text1.insert(tk.END, dataA[i] + "\n","empty")
+                text2.insert(tk.END, "\n\n","empty")
             elif nameA == nameB and j - p > 1: 
                 l = j
                 for k in range(p+1,l):
-                    text1.insert('insert', "\n\n","empty")
-                    text2.insert('insert', dataB[k],"empty")
+                    text1.insert(tk.END, "\n\n","empty")
+                    text2.insert(tk.END, dataB[k] + "\n","empty")
                 if nameA==nameB and dataA[i] == dataB[j]:
                     green(dataA, dataB,i,j,text1,text2)
                     p = j
                 if nameA==nameB and dataA[i] != dataB[j]:
-                    red(dataA, dataB,i,j,text1,text2)
+                    red(dataA, dataB + "\n",i,j,text1,text2)
                     p = j
                 added = "true"
         if added == "false":
-            text1.insert('insert', dataA[i],"empty")
-            text2.insert('insert', "\n\n","empty")
+            text1.insert(tk.END, dataA[i] + "\n","empty")
+            text2.insert(tk.END, "\n\n","empty")
     #adding last elements from dataB without match
     if p<j:
         for a in range(p+1,len(dataB)):
-            text1.insert('insert', "\n\n","empty")
-            text2.insert('insert', dataB[a],"empty")
+            text1.insert(tk.END, "\n\n","empty")
+            text2.insert(tk.END, dataB[a] + "\n","empty")
 
 def f1_but_click(event):
 #Get filepath from user
@@ -180,7 +171,6 @@ def comp_but_click(event):
             )
 
         text1.pack(fill='both',side=tk.LEFT, expand=True, padx=2)
-        #text1.insert('insert', lenA)
 
         frame2 = tk.Frame(master=root,bg="blue")
         frame2.pack(fill=tk.BOTH, side=tk.LEFT)
@@ -190,7 +180,6 @@ def comp_but_click(event):
         )
 
         text2.pack(fill='both',side=tk.LEFT, expand=True, padx=2)
-        #text2.insert('insert', lenB)
         compare(dataA, dataB,text1, text2)
         root.mainloop() 
 comp_but.bind("<Button-1>", comp_but_click)
